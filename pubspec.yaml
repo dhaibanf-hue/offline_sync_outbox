@@ -1,0 +1,20 @@
+name: offline_sync_manager
+description: A lightweight offline-first FIFO sync queue with durable storage, connectivity triggers, and configurable retry policies for Dart and Flutter.
+version: 1.0.0
+repository: https://github.com/dhaibanf-hue/offline_sync_manager
+issue_tracker: https://github.com/dhaibanf-hue/offline_sync_manager/issues
+topics:
+  - offline-first
+  - synchronization
+  - queue
+  - retry
+  - flutter
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies: {}
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
