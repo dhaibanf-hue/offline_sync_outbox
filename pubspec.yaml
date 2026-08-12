@@ -1,6 +1,6 @@
 name: offline_sync_outbox
 description: Queue API writes offline and replay them in order with persistent storage and configurable retries for Dart and Flutter.
-version: 1.0.1
+version: 1.0.2
 repository: https://github.com/dhaibanf-hue/offline_sync_outbox
 issue_tracker: https://github.com/dhaibanf-hue/offline_sync_outbox/issues
 topics:

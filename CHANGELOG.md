@@ -1,9 +1,11 @@
 # Changelog
 
-## Unreleased
+## 1.0.2
 
 - Shorten the setup guide and clarify storage, connectivity, and retry behavior.
 - Clean up queue internals without changing the public API.
+- Add a runnable offline-to-online demo to the package README.
+- Update the GitHub Actions checkout step to its Node 24-based release.
 
 ## 1.0.1
 
