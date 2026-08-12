@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:offline_sync_manager/offline_sync_manager.dart';
+import 'package:offline_sync_outbox/offline_sync_outbox.dart';
 
 Future<void> main() async {
   final directory = await Directory.systemTemp.createTemp('offline_sync_demo_');

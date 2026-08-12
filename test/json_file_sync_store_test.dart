@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:offline_sync_manager/offline_sync_manager.dart';
+import 'package:offline_sync_outbox/offline_sync_outbox.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -8,7 +8,7 @@ void main() {
 
   setUp(() async {
     temporaryDirectory = await Directory.systemTemp.createTemp(
-      'offline_sync_manager_test_',
+      'offline_sync_outbox_test_',
     );
   });
 

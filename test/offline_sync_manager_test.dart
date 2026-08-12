@@ -1,4 +1,4 @@
-import 'package:offline_sync_manager/offline_sync_manager.dart';
+import 'package:offline_sync_outbox/offline_sync_outbox.dart';
 import 'package:test/test.dart';
 
 void main() {

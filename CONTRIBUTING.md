@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `offline_sync_manager`.
+Thanks for helping improve `offline_sync_outbox`.
 
 ## Local checks
 

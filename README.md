@@ -1,7 +1,7 @@
-# offline_sync_manager
+# offline_sync_outbox
 
-[![pub package](https://img.shields.io/pub/v/offline_sync_manager.svg)](https://pub.dev/packages/offline_sync_manager)
-[![CI](https://github.com/dhaibanf-hue/offline_sync_manager/actions/workflows/ci.yml/badge.svg)](https://github.com/dhaibanf-hue/offline_sync_manager/actions/workflows/ci.yml)
+[![pub package](https://img.shields.io/pub/v/offline_sync_outbox.svg)](https://pub.dev/packages/offline_sync_outbox)
+[![CI](https://github.com/dhaibanf-hue/offline_sync_outbox/actions/workflows/ci.yml/badge.svg)](https://github.com/dhaibanf-hue/offline_sync_outbox/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A lightweight offline-first operation queue for Dart and Flutter. It keeps API
@@ -12,7 +12,7 @@ returns, and applies configurable exponential backoff when requests fail.
 
 Mobile connections disappear at inconvenient moments. UI code should not need to
 know whether a mutation was sent immediately, queued for later, or retried after a
-temporary server failure. `offline_sync_manager` isolates that responsibility
+temporary server failure. `offline_sync_outbox` isolates that responsibility
 behind a small processor and storage abstraction.
 
 ## Features
@@ -33,13 +33,13 @@ behind a small processor and storage abstraction.
 For Flutter:
 
 ```console
-flutter pub add offline_sync_manager
+flutter pub add offline_sync_outbox
 ```
 
 For Dart:
 
 ```console
-dart pub add offline_sync_manager
+dart pub add offline_sync_outbox
 ```
 
 ## Quick start
@@ -155,7 +155,7 @@ The package separates policy from infrastructure:
 - `SyncConnectivity` supplies online state without coupling to a plugin.
 - `SyncRetryPolicy` calculates bounded exponential delays.
 
-See [`example/offline_sync_manager_example.dart`](example/offline_sync_manager_example.dart)
+See [`example/offline_sync_outbox_example.dart`](example/offline_sync_outbox_example.dart)
 for a complete runnable example.
 
 ## Contributing
