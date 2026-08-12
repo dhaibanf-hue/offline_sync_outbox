@@ -79,9 +79,9 @@ final class JsonFileSyncStore implements SyncStore {
         await backup.delete();
       }
 
-      final json = const JsonEncoder.withIndent(
-        '  ',
-      ).convert(operations.map((operation) => operation.toJson()).toList());
+      final json = jsonEncode(
+        operations.map((operation) => operation.toJson()).toList(),
+      );
       await temporary.writeAsString('$json\n', flush: true);
 
       if (await _file.exists()) {

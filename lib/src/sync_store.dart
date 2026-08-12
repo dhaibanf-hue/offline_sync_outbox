@@ -30,8 +30,7 @@ final class SyncStoreException implements Exception {
   final Object? cause;
 
   @override
-  String toString() {
-    final suffix = cause == null ? '' : ' Cause: $cause';
-    return 'SyncStoreException: $message$suffix';
-  }
+  String toString() => cause == null
+      ? 'SyncStoreException: $message'
+      : 'SyncStoreException: $message Cause: $cause';
 }

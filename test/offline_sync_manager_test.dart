@@ -14,6 +14,7 @@ void main() {
         },
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
       await manager.enqueue(id: 'one', action: 'first');
       await manager.enqueue(id: 'two', action: 'second');
 
@@ -23,7 +24,6 @@ void main() {
       expect(report.attempted, 2);
       expect(report.succeeded, 2);
       expect(report.isQueueEmpty, isTrue);
-      await manager.dispose();
     });
 
     test('strict FIFO blocks newer work while the head retries', () async {
@@ -42,6 +42,7 @@ void main() {
         },
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
       await manager.enqueue(id: 'one', action: 'first');
       await manager.enqueue(id: 'two', action: 'second');
 
@@ -52,7 +53,6 @@ void main() {
       expect(firstReport.pending, 2);
       expect(secondReport.succeeded, 2);
       expect(processed, <String>['one', 'one', 'two']);
-      await manager.dispose();
     });
 
     test('processor exceptions consume the retry budget', () async {
@@ -66,6 +66,7 @@ void main() {
         processor: (_) async => throw StateError('network failure'),
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
       await manager.enqueue(id: 'one', action: 'fails');
 
       final firstReport = await manager.synchronize();
@@ -74,7 +75,6 @@ void main() {
       expect(firstReport.retried, 1);
       expect(secondReport.failedPermanently, 1);
       expect(secondReport.pending, 0);
-      await manager.dispose();
     });
 
     test('discarded operations do not block later work', () async {
@@ -86,6 +86,7 @@ void main() {
             : const SyncResult.success(),
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
       await manager.enqueue(id: 'invalid', action: 'first');
       await manager.enqueue(id: 'valid', action: 'second');
 
@@ -94,7 +95,6 @@ void main() {
       expect(report.discarded, 1);
       expect(report.succeeded, 1);
       expect(report.pending, 0);
-      await manager.dispose();
     });
 
     test('offline passes leave the queue untouched', () async {
@@ -110,6 +110,7 @@ void main() {
         },
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
       await manager.enqueue(id: 'one', action: 'waiting');
 
       final report = await manager.synchronize();
@@ -117,7 +118,6 @@ void main() {
       expect(report.skippedOffline, isTrue);
       expect(report.pending, 1);
       expect(processorCalls, 0);
-      await manager.dispose();
     });
 
     test('concurrent enqueues are serialized', () async {
@@ -127,6 +127,7 @@ void main() {
         processor: (_) async => const SyncResult.success(),
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
 
       await Future.wait(<Future<SyncOperation>>[
         manager.enqueue(id: 'one', action: 'first'),
@@ -139,7 +140,6 @@ void main() {
         pending.map((operation) => operation.id),
         <String>['one', 'two', 'three'],
       );
-      await manager.dispose();
     });
 
     test('duplicate operation IDs are rejected', () async {
@@ -149,13 +149,13 @@ void main() {
         processor: (_) async => const SyncResult.success(),
       );
       await manager.initialize();
+      addTearDown(manager.dispose);
       await manager.enqueue(id: 'duplicate', action: 'first');
 
       expect(
         () => manager.enqueue(id: 'duplicate', action: 'second'),
         throwsStateError,
       );
-      await manager.dispose();
     });
   });
 }

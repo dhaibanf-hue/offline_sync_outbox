@@ -35,10 +35,8 @@ final class SyncOperation {
     DateTime? createdAt,
   }) {
     final timestamp = (createdAt ?? DateTime.now()).toUtc();
-    final generatedId =
-        'sync-${timestamp.microsecondsSinceEpoch}-${_sequence++}';
     return SyncOperation(
-      id: id ?? generatedId,
+      id: id ?? 'sync-${timestamp.microsecondsSinceEpoch}-${_sequence++}',
       action: action,
       payload: payload,
       createdAt: timestamp,
