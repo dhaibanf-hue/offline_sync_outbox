@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible problem with the queue, storage, or retries.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report this.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: 1.0.2
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and Dart/Flutter version
+      placeholder: Android 15, Flutter 3.x, Dart 3.x
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the manager setup and the calls needed to reproduce the problem.
+      render: dart
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or stack trace
+      render: text

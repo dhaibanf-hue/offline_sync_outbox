@@ -1,0 +1,33 @@
+name: Feature request
+description: Suggest a focused change to the public API or queue behavior.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the application behavior that is difficult with the current API.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API or behavior
+      description: A short Dart example is helpful when the change affects the public API.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Would you like to work on this?
+      options:
+        - Yes
+        - Maybe, with guidance
+        - No
+    validations:
+      required: true
