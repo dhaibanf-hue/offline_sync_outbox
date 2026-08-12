@@ -10,6 +10,8 @@ actual HTTP or repository call stays in your application.
 
 The package has no runtime dependencies.
 
+![Offline queue demo](assets/offline-sync-demo.gif)
+
 ## Install
 
 ```console
