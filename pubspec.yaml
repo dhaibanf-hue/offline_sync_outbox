@@ -1,5 +1,5 @@
 name: offline_sync_outbox
-description: A lightweight offline-first FIFO sync queue with durable storage, connectivity triggers, and configurable retry policies for Dart and Flutter.
+description: Queue API writes offline and replay them in order with persistent storage and configurable retries for Dart and Flutter.
 version: 1.0.1
 repository: https://github.com/dhaibanf-hue/offline_sync_outbox
 issue_tracker: https://github.com/dhaibanf-hue/offline_sync_outbox/issues

@@ -38,9 +38,8 @@ final class SyncRetryPolicy {
   final double multiplier;
 
   /// Returns whether another attempt is allowed after [failedAttemptCount].
-  bool canRetryAfter(int failedAttemptCount) {
-    return failedAttemptCount < maxAttempts;
-  }
+  bool canRetryAfter(int failedAttemptCount) =>
+      failedAttemptCount < maxAttempts;
 
   /// Calculates the delay after a one-based failed attempt count.
   Duration delayAfter(int failedAttemptCount) {

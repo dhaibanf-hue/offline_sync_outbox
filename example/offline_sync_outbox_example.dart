@@ -4,12 +4,11 @@ import 'package:offline_sync_outbox/offline_sync_outbox.dart';
 
 Future<void> main() async {
   final directory = await Directory.systemTemp.createTemp('offline_sync_demo_');
-  final queuePath =
-      '${directory.path}${Platform.pathSeparator}offline-queue.json';
+  final path = '${directory.path}${Platform.pathSeparator}offline-queue.json';
   final connectivity = ManualSyncConnectivity(isOnline: false);
 
   final manager = OfflineSyncManager(
-    store: JsonFileSyncStore(queuePath),
+    store: JsonFileSyncStore(path),
     connectivity: connectivity,
     autoSync: false,
     processor: (operation) async {
@@ -21,18 +20,20 @@ Future<void> main() async {
   );
 
   await manager.initialize();
-  await manager.enqueue(
-    action: 'create_note',
-    payload: <String, Object?>{'text': 'Written while offline'},
-  );
+  try {
+    await manager.enqueue(
+      action: 'create_note',
+      payload: <String, Object?>{'text': 'Written while offline'},
+    );
 
-  final offlineReport = await manager.synchronize();
-  stdout.writeln('Pending while offline: ${offlineReport.pending}');
+    final offline = await manager.synchronize();
+    stdout.writeln('Pending while offline: ${offline.pending}');
 
-  connectivity.setOnline(true);
-  final onlineReport = await manager.synchronize();
-  stdout.writeln('Uploaded: ${onlineReport.succeeded}');
-
-  await manager.dispose();
-  await directory.delete(recursive: true);
+    connectivity.setOnline(true);
+    final synced = await manager.synchronize();
+    stdout.writeln('Uploaded: ${synced.succeeded}');
+  } finally {
+    await manager.dispose();
+    await directory.delete(recursive: true);
+  }
 }

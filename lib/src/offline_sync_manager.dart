@@ -42,7 +42,7 @@ final class OfflineSyncManager {
   final StreamController<SyncEvent> _events =
       StreamController<SyncEvent>.broadcast();
 
-  Future<void> _serialTail = Future<void>.value();
+  Future<void> _tail = Future<void>.value();
   StreamSubscription<bool>? _connectivitySubscription;
   Timer? _retryTimer;
   bool _initialized = false;
@@ -59,7 +59,7 @@ final class OfflineSyncManager {
 
   /// Initializes storage and connectivity listeners.
   Future<void> initialize({bool syncOnStart = true}) async {
-    await _serialize<void>(() async {
+    await _runSerial<void>(() async {
       _ensureNotDisposed();
       if (_initialized) {
         return;
@@ -103,14 +103,14 @@ final class OfflineSyncManager {
 
   /// Appends an existing operation to the end of the FIFO queue.
   Future<void> enqueueOperation(SyncOperation operation) async {
-    await _serialize<void>(() async {
+    await _runSerial<void>(() async {
       _ensureReady();
-      final operations = await _store.readAll();
-      if (operations.any((item) => item.id == operation.id)) {
+      final queue = await _store.readAll();
+      if (queue.any((item) => item.id == operation.id)) {
         throw StateError(
             'An operation with ID ${operation.id} already exists.');
       }
-      await _store.writeAll(<SyncOperation>[...operations, operation]);
+      await _store.writeAll(<SyncOperation>[...queue, operation]);
       _emit(SyncEventType.enqueued, operation: operation);
     });
 
@@ -121,7 +121,7 @@ final class OfflineSyncManager {
 
   /// Returns a snapshot of pending operations in FIFO order.
   Future<List<SyncOperation>> pendingOperations() {
-    return _serialize<List<SyncOperation>>(() async {
+    return _runSerial<List<SyncOperation>>(() async {
       _ensureReady();
       return _store.readAll();
     });
@@ -129,21 +129,21 @@ final class OfflineSyncManager {
 
   /// Removes a queued operation by ID and reports whether it existed.
   Future<bool> remove(String id) {
-    return _serialize<bool>(() async {
+    return _runSerial<bool>(() async {
       _ensureReady();
-      final operations = await _store.readAll();
-      final updated = operations.where((item) => item.id != id).toList();
-      if (updated.length == operations.length) {
+      final queue = await _store.readAll();
+      final remaining = queue.where((item) => item.id != id).toList();
+      if (remaining.length == queue.length) {
         return false;
       }
-      await _store.writeAll(updated);
+      await _store.writeAll(remaining);
       return true;
     });
   }
 
   /// Removes all pending operations.
   Future<void> clear() {
-    return _serialize<void>(() async {
+    return _runSerial<void>(() async {
       _ensureReady();
       _retryTimer?.cancel();
       await _store.writeAll(const <SyncOperation>[]);
@@ -152,7 +152,7 @@ final class OfflineSyncManager {
 
   /// Runs one serialized synchronization pass.
   Future<SyncReport> synchronize() {
-    return _serialize<SyncReport>(() async {
+    return _runSerial<SyncReport>(() async {
       _ensureReady();
       _retryTimer?.cancel();
 
@@ -215,27 +215,27 @@ final class OfflineSyncManager {
               message: result.reason,
             );
           case SyncDisposition.retry:
-            final failedAttempts = operation.attemptCount + 1;
-            if (!_retryPolicy.canRetryAfter(failedAttempts)) {
+            final attempts = operation.attemptCount + 1;
+            if (!_retryPolicy.canRetryAfter(attempts)) {
               queue = queue.sublist(1);
               await _store.writeAll(queue);
               failedPermanently += 1;
               _emit(
                 SyncEventType.failedPermanently,
-                operation: operation.copyWith(attemptCount: failedAttempts),
+                operation: operation.copyWith(attemptCount: attempts),
                 message: result.reason,
               );
               continue;
             }
 
             final delay =
-                result.retryAfter ?? _retryPolicy.delayAfter(failedAttempts);
+                result.retryAfter ?? _retryPolicy.delayAfter(attempts);
             if (delay.isNegative) {
               throw StateError('A processor returned a negative retry delay.');
             }
             final retryAt = _clock().toUtc().add(delay);
             final updated = operation.copyWith(
-              attemptCount: failedAttempts,
+              attemptCount: attempts,
               nextAttemptAt: retryAt,
             );
             queue = <SyncOperation>[updated, ...queue.skip(1)];
@@ -274,7 +274,7 @@ final class OfflineSyncManager {
 
   /// Cancels timers, closes storage, and releases event resources.
   Future<void> dispose() {
-    return _serialize<void>(() async {
+    return _runSerial<void>(() async {
       if (_disposed) {
         return;
       }
@@ -291,9 +291,9 @@ final class OfflineSyncManager {
     });
   }
 
-  Future<T> _serialize<T>(Future<T> Function() action) {
+  Future<T> _runSerial<T>(Future<T> Function() action) {
     final completer = Completer<T>();
-    _serialTail = _serialTail.then((_) async {
+    _tail = _tail.then((_) async {
       try {
         completer.complete(await action());
       } on Object catch (error, stackTrace) {

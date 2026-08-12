@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Shorten the setup guide and clarify storage, connectivity, and retry behavior.
+- Clean up queue internals without changing the public API.
+
 ## 1.0.1
 
 - Rename the package to `offline_sync_outbox` because the original pub.dev name
